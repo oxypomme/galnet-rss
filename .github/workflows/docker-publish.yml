@@ -12,10 +12,33 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository 🛎️
+        uses: actions/checkout@v4
+
+      - name: Install Deno 🔧
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Run formatter 🎨
+        run: deno fmt --check
+
+      - name: Run lint 🔬
+        run: deno lint
+
+      - name: Run tests 🧪
+        run: deno test --allow-net --coverage=cov/
+
+      # - name: Generate coverage 📊
+      #   run: deno coverage --lcov cov/ > cov.lcov
+
   build-and-push-image:
     permissions: write-all
     runs-on: ubuntu-latest
-
+    needs: test
     steps:
       - name: Checkout repository 🛎️
         uses: actions/checkout@v4

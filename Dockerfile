@@ -1,7 +1,7 @@
-FROM denoland/deno:2.1.10
+FROM denoland/deno:alpine
 
 # The port that your application listens to.
-EXPOSE 8080
+EXPOSE 8000
 
 WORKDIR /app
 
