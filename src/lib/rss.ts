@@ -53,7 +53,7 @@ export function transformOriginToGalnet(origin: OriginRSS): GalNetRSS {
       "#text": `${GALNET_BASE_URL}/uid/${item.guid["#text"]}`,
     },
     link: { "#text": `${GALNET_BASE_URL}/uid/${item.guid["#text"]}` },
-    pubDate: item.pubDate.toISOString(),
+    pubDate: item.pubDate.toUTCString(),
   }));
 
   return GalNetRSSSchema.parse({
