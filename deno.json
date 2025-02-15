@@ -1,0 +1,11 @@
+{
+  "tasks": {
+    "start": "deno run --allow-net src/main.ts",
+    "dev": "deno run --allow-net --watch src/main.ts"
+  },
+  "imports": {
+    "@libs/xml": "jsr:@libs/xml@^6.0.4",
+    "@onjara/optic": "jsr:@onjara/optic@^2.0.3",
+    "zod": "npm:zod@^3.24.2"
+  }
+}

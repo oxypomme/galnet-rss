@@ -1,0 +1,50 @@
+{
+  "version": "3",
+  "packages": {
+    "specifiers": {
+      "jsr:@libs/xml@^6.0.4": "jsr:@libs/xml@6.0.4",
+      "jsr:@onjara/optic@^2.0.3": "jsr:@onjara/optic@2.0.3",
+      "jsr:@std/assert": "jsr:@std/assert@1.0.11",
+      "jsr:@std/fmt@^1.0.2": "jsr:@std/fmt@1.0.5",
+      "jsr:@std/internal@^1.0.5": "jsr:@std/internal@1.0.5",
+      "npm:zod@^3.24.2": "npm:zod@3.24.2"
+    },
+    "jsr": {
+      "@libs/xml@6.0.4": {
+        "integrity": "c896f17016dbf5f2d62496e0bd6cd7db145c05987d0e45d4dd2c87785a60f528"
+      },
+      "@onjara/optic@2.0.3": {
+        "integrity": "b4bf8cae0820a3c3f362ba4d78939237fcfa23e3087bbd3f9fd3c883839820f1",
+        "dependencies": [
+          "jsr:@std/fmt@^1.0.2"
+        ]
+      },
+      "@std/assert@1.0.11": {
+        "integrity": "2461ef3c368fe88bc60e186e7744a93112f16fd110022e113a0849e94d1c83c1",
+        "dependencies": [
+          "jsr:@std/internal@^1.0.5"
+        ]
+      },
+      "@std/fmt@1.0.5": {
+        "integrity": "0cfab43364bc36650d83c425cd6d99910fc20c4576631149f0f987eddede1a4d"
+      },
+      "@std/internal@1.0.5": {
+        "integrity": "54a546004f769c1ac9e025abd15a76b6671ddc9687e2313b67376125650dc7ba"
+      }
+    },
+    "npm": {
+      "zod@3.24.2": {
+        "integrity": "sha512-lY7CDW43ECgW9u1TcT3IoXHflywfVqDYze4waEz812jR/bZ8FHDsl7pFQoSZTz5N+2NqRXs8GBwnAwo3ZNxqhQ==",
+        "dependencies": {}
+      }
+    }
+  },
+  "remote": {},
+  "workspace": {
+    "dependencies": [
+      "jsr:@libs/xml@^6.0.4",
+      "jsr:@onjara/optic@^2.0.3",
+      "npm:zod@^3.24.2"
+    ]
+  }
+}
