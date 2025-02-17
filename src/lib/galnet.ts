@@ -1,57 +1,77 @@
-import { parse as parseXML, type xml_document } from "@libs/xml";
-import { z } from "zod";
+import config from "../config.ts";
+import { parse as parseXML } from "@libs/xml";
+import { DOMParser, type HTMLDocument } from "@b-fuze/deno-dom";
 
 import { createLogger } from "./logger.ts";
 
-const GALNET_URL = "https://community.elitedangerous.com/galnet-rss";
-
+const domParser = new DOMParser();
 const logger = createLogger("galnet");
+export type BaseGalNetRSSItem = {
+  guid: {
+    "#text": string;
+    "@isPermaLink": boolean;
+  };
+  title: string;
+  description: string;
+  pubDate: Date;
+};
 
-const OriginRSSItemSchema = z.object({
-  guid: z.object({
-    "#text": z.string(),
-    "@isPermaLink": z.coerce.boolean(),
-  }),
-  title: z.string(),
-  description: z.string(),
-  pubDate: z.coerce.date(),
-});
+export type BaseGalNetRSSChannel = {
+  "atom:link": {
+    "@href": string;
+    "@rel": string;
+    "@type": string;
+  };
+  title: string;
+  description: string;
+  link: string;
+  language: string;
+  item: BaseGalNetRSSItem[];
+};
 
-const OriginRSSChannelSchema = z.object({
-  "atom:link": z.object({
-    "@href": z.string().url(),
-    "@rel": z.string(),
-    "@type": z.string(),
-  }),
-  title: z.string(),
-  description: z.string(),
-  link: z.string().url(),
-  language: z.string(),
-  item: z.array(OriginRSSItemSchema),
-});
+export type BaseGalNetRSS = {
+  rss: {
+    "@version": string;
+    "@xmlns:atom": string;
+    channel: BaseGalNetRSSChannel;
+  };
+};
 
-const OriginRSSSchema = z.object({
-  rss: z.object({
-    "@version": z.string(),
-    "@xmlns:atom": z.string().url(),
-    channel: OriginRSSChannelSchema,
-  }),
-});
-
-export type OriginRSS = z.infer<typeof OriginRSSSchema>;
-
-export async function getXML(): Promise<xml_document> {
-  logger.debug("Fetching GalNet", { url: GALNET_URL });
-  const response = await fetch(
-    "https://community.elitedangerous.com/galnet-rss",
-  );
-
-  logger.trace("Fetched GalNet", { url: GALNET_URL, status: response.status });
+export async function fetchGalNetRSS(): Promise<BaseGalNetRSS> {
+  logger.debug("Fetching GalNet RSS", { url: config.galnet.rssUrl });
+  const response = await fetch(config.galnet.rssUrl);
+  logger.trace("Fetched GalNet RSS", {
+    url: config.galnet.rssUrl,
+    status: response.status,
+  });
   const text = await response.text();
 
-  return parseXML(text);
+  return parseXML(text) as unknown as BaseGalNetRSS;
 }
 
-export function getRSS(xml: xml_document): Promise<OriginRSS> {
-  return OriginRSSSchema.parseAsync(xml);
+async function fetchGalNetEntry(guid: string): Promise<HTMLDocument> {
+  const url = `${config.galnet.webUrl}/uid/${guid}`;
+  logger.debug("Fetching GalNet entry", { url });
+  const response = await fetch(url);
+  logger.trace("Fetched GalNet entry", { url, status: response.status });
+  const text = await response.text();
+
+  return domParser.parseFromString(text, "text/html");
+}
+
+const dateCache = new Map<string, Date>();
+export async function getDateFromGalNetEntry(guid: string): Promise<Date> {
+  if (!dateCache.has(guid)) {
+    const entry = await fetchGalNetEntry(guid);
+    const dateEl = entry.querySelector(
+      "div.article > h3.galnetNewsArticleTitle+div > p",
+    );
+    if (!dateEl) {
+      throw new Error("No date element found in entry");
+    }
+    const date = new Date(dateEl.textContent);
+    date.setFullYear(date.getFullYear() - config.galnet.yearOffset);
+    dateCache.set(guid, date);
+  }
+  return dateCache.get(guid)!;
 }

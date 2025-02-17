@@ -1,12 +1,9 @@
 import { assertEquals, assertExists } from "jsr:@std/assert";
 
-import { getRSS, getXML } from "./galnet.ts";
-import { galnetToXML, transformOriginToGalnet } from "./rss.ts";
+import { fetchRSS, RSSAsXML } from "./rss.ts";
 
-const document = await getXML();
-const origin = await getRSS(document);
-const feed = transformOriginToGalnet(origin);
-const output = galnetToXML(feed);
+const feed = await fetchRSS();
+const rss = RSSAsXML(feed);
 
 Deno.test("should be able to add missing fields", () => {
   assertExists(feed);
@@ -21,6 +18,6 @@ Deno.test("should be able to add missing fields", () => {
 });
 
 Deno.test("should output string", () => {
-  assertExists(output);
-  assertEquals(typeof output, "string");
+  assertExists(rss);
+  assertEquals(typeof rss, "string");
 });

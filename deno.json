@@ -4,6 +4,7 @@
     "dev": "deno run --allow-net --watch src/main.ts"
   },
   "imports": {
+    "@b-fuze/deno-dom": "jsr:@b-fuze/deno-dom@^0.1.49",
     "@libs/xml": "jsr:@libs/xml@^6.0.4",
     "@onjara/optic": "jsr:@onjara/optic@^2.0.3",
     "zod": "npm:zod@^3.24.2"
